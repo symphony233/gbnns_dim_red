@@ -40,6 +40,7 @@ if __name__ == '__main__':
     aa("--epochs", type=int, default=40)
     aa("--lr_schedule", type=str, default="0.1,0.1,0.05,0.01")
     aa("--momentum", type=float, default=0.9)
+    aa("--lambda_uniform", type=list, default=0)
 
     args = parser.parse_args()
 
@@ -61,6 +62,7 @@ if __name__ == '__main__':
     (_, xb, xq, _) = load_dataset(args.database, args.device, calc_gt=False, mnt=True)
 
     base_size = xb.shape[0]
+    print(base_size)
     threshold = int(base_size * 0.01)
     perm = np.random.permutation(base_size)
     xv = xb[perm[:threshold]]
@@ -70,7 +72,7 @@ if __name__ == '__main__':
         xt = xb[perm[threshold:]]
 
     print(xb.shape, xt.shape, xv.shape, xq.shape)
-
+    
     xt = sanitize(xt)
     xv = sanitize(xv)
     xb = sanitize(xb)

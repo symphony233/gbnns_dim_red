@@ -309,8 +309,10 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
 
     cout << n << " " << n_q << " " << n_tr << " " << d << " " << d_low << endl;
 
-    string path_data = "/mnt/data/shekhale/data/" + dataset_name + "/" + dataset_name;
-    string path_models = "/mnt/data/shekhale/models/nns_graphs/" + dataset_name + "/";
+    string path_data = "/home/cm/data/" + dataset_name + "/" + dataset_name;
+    string path_models = "/home/cm/experiment/gbnns_dim_red/models/nn_graphs" + dataset_name + "/" + dataset_name;
+    // string path_data = "/mnt/data/shekhale/data/" + dataset_name + "/" + dataset_name;
+    // string path_models = "/mnt/data/shekhale/models/nns_graphs/" + dataset_name + "/";
 //    string net_style = "naive_triplet";
 
     string dir_d = path_data + "_base" + valid + ".fvecs";
@@ -328,7 +330,7 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
     string edge_knn_low_dir_s = path_models + "knn_1k_" + file_name + valid + ".ivecs";
     const char *edge_knn_low_dir = edge_knn_low_dir_s.c_str();
 
-    string output_txt_s = "/home/shekhale/results/dim_red/" + dataset_name + "/train_results_" +  file_name + ".txt";
+    string output_txt_s = "/home/cm/experiment/gbnns_dim_red/results/" + dataset_name + "/train_results_" +  file_name + ".txt";
     const char *output_txt = output_txt_s.c_str();
 //    remove(output_txt);
 
@@ -381,7 +383,7 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
 
 	vector< vector <uint32_t>> gd_knn_low(n);
     // gd_knn_low = load_edges(edge_gd_knn_low_dir, gd_knn_low);
-	gd_knn_low = hnswlikeGD(knn_low, ds_low.data(), 20, n, d_low, &l2, reverse_gd);
+	gd_knn_low = hnswlikeGD(knn_low, ds_low.data(), 20, n, d_low, &l2, reverse_gd, false);
 	cout << "GD_knn_low " << FindGraphAverageDegree(gd_knn_low) << endl;
     // write_edges(edge_gd_knn_dir, gd_knn);
 

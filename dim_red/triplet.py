@@ -168,12 +168,14 @@ def triplet_optimize(xt, xv, gt_nn, xq, net, args, lambda_uniform, k_pos, k_neg,
 
 
 def train_triplet(xb, xt, xv, xq, args, results_file_name):
-
+    print("in trian_triplet function")
+    
     lambdas = ifelse(args.lambda_uniform, list(np.logspace(-2, 0, 3)))
     dints = ifelse(args.dint, [512])
     ranks_pos = [5]
     ranks_neg = [10]
     dataset_first_letter = args.database[0]
+    lambdas = [0.01]
     if args.database == "sift":
         ranks_pos = [5]
         ranks_neg = [10]
@@ -214,8 +216,8 @@ def train_triplet(xb, xt, xv, xq, args, results_file_name):
         net.to(args.device)
         val_k = 2 * args.dout
 
-        models_path =  "/mnt/data/shekhale/models/nns_graphs/" + args.database + "/" + args.database
-        data_path =  "/mnt/data/shekhale/data/" + args.database + "/" + args.database
+        models_path =  "/home/cm/experiment/gbnns_dim_red/models/nns_graphs/" + args.database + "/" + args.database
+        data_path =  "/home/cm/data/" + args.database + "/" + args.database
         valid = ""
         if args.full != 1:
             valid = "_valid"

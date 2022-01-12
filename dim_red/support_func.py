@@ -51,7 +51,7 @@ def top_dist(A, B, k):
     return cdist2(A, B).topk(k, dim=1, largest=False, sorted=True)[1]
 
 
-def get_nearestneighbors_torch(xq, xb, k, device, needs_exact=False, verbose=False):
+def get_nearestneighbors_torch(xq, xb, k, device, needs_exact=False, verbose=True):
     if verbose:
         print("Computing nearest neighbors (torch)")
 
@@ -59,7 +59,7 @@ def get_nearestneighbors_torch(xq, xb, k, device, needs_exact=False, verbose=Fal
     start = time.time()
     xb, xq = torch.from_numpy(xb), torch.from_numpy(xq)
     xb, xq = xb.to(device), xq.to(device)
-    bs = 500
+    bs = 10
     I = torch.cat([top_dist(xq[i*bs:(i+1)*bs], xb, k)
                    for i in range(xq.size(0) // bs)], dim=0)
     if verbose:

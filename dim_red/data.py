@@ -4,6 +4,8 @@ import numpy as np
 from struct import pack, unpack
 from struct import pack
 
+from numpy.lib.npyio import load
+
 
 def write_fvecs(filename, vecs):
     with open(filename, "wb") as f:
@@ -69,7 +71,10 @@ def read_ivecs(filename, max_size=None):
 def mmap_fvecs(fname):
     x = np.memmap(fname, dtype='int32', mode='r')
     d = x[0]
-    return x.view('float32').reshape(-1, d + 1)[:, 1:]
+    x = x.view('float32').reshape(-1, d + 1)[:, 1:]
+    x = x[:10000, :]
+    print('a: ',x.shape)
+    return x
 
 
 def mmap_bvecs(fname):
@@ -78,12 +83,17 @@ def mmap_bvecs(fname):
     return x.reshape(-1, d + 4)[:, 4:]
 
 
+
 def getBasedir(s, mnt=False):
     if mnt:
-        start = "/mnt/data/shekhale/"
+        start = "/home/cm/"
+        # start = "/home/cm/experiment/big-ann-benchmarks/"
+        # start = "/mnt/data/shekhale/"
     else:
-        start = "/home/shekhale/"
+        start = "/home/cm/"
+        # start = "/home/shekhale/"
     paths = {
+        "sift1b": start + "data/sift1b/sift1b",
         "sift": start + "data/sift/sift",
         "gist": start + "data/gist/gist",
         "glove": start + "data/glove/glove",
@@ -96,10 +106,30 @@ def getBasedir(s, mnt=False):
 
 def load_simple(device, database, calc_gt=False, mnt=False):
     basedir = getBasedir(database, mnt)
-    xb = mmap_fvecs(basedir + '_base.fvecs')
-    xq = mmap_fvecs(basedir + '_query.fvecs')
-    gt = ivecs_read(basedir + '_groundtruth.ivecs')
+    base_suffix = "_base.fvecs"
+    query_suffix = "_query.fvecs"
+    gt_suffix = "_groundtruth.ivecs"
+    if database == "spacev1b":
+        base_suffix = "_base.i8bin"
+        query_suffix = "_query.i8bin"
+        gt_suffix = "_gt100.bin"
+    elif database == "sift1b":
+        base_suffix = "_base.bvecs"
+        query_suffix = "_query.bvecs"
 
+    if database == "spacev1b":
+        xb = mmap_bvecs(basedir + base_suffix)
+        xq = None
+        gt = None
+    elif database == "sift1b":
+        xb = mmap_bvecs(basedir + base_suffix)
+        xq = mmap_bvecs(basedir + query_suffix)
+        gt = ivecs_read(basedir + gt_suffix)
+    else:
+        xb = mmap_fvecs(basedir + base_suffix)
+        xq = mmap_fvecs(basedir + query_suffix)
+        gt = ivecs_read(basedir + gt_suffix)
+    
     xb, xq = np.ascontiguousarray(xb), np.ascontiguousarray(xq)
     # if calc_gt:
     #     gt = get_nearestneighbors(xq, xb, 100, device, needs_exact=True)
@@ -117,5 +147,9 @@ def load_dataset(name, device, size=10**6, calc_gt=False, mnt=True):
         return load_simple(device, "deep", calc_gt, mnt)
     elif name == "glove":
         return load_simple(device, "glove", calc_gt, mnt)
+    elif name == "spacev1b":
+        return load_simple(device, "spacev1b", False, True)
+    elif name == "sift1b":
+        return load_simple(device, "sift1b", calc_gt, mnt)
 
 

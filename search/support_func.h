@@ -162,6 +162,14 @@ public:
     };
 };
 
+int FindGraphAverageDegree(vector< vector <uint32_t>> &graph) {
+    float ans = 0;
+    int n = graph.size();
+    for (int i=0; i < n; ++i) {
+        ans += graph[i].size();
+    }
+    return float(ans / n);
+}
 
 int findGraphAverageDegree(vector< vector <uint32_t>> &graph) {
     double ans = 0;
@@ -225,6 +233,24 @@ vector<T> loadXvecs(string dataPath, const size_t d, const size_t n = 1) {
     readXvec<T>(dataInput, data.data(), d, n);
 
     return data;
+}
+
+vector<std::vector<uint32_t>> load_edges(const char *location, std::vector<std::vector<uint32_t>> edges) {
+    // std::cout << "Loading edges from " << location << std::endl;
+    std::ifstream input(location, std::ios::binary);
+
+    uint32_t size;
+    for (int i = 0; i < edges.size(); i++) {
+        input.read((char *) &size, sizeof(uint32_t));
+
+        vector<uint32_t> vec(size);
+        uint32_t *data = vec.data();
+        input.read((char *) data, sizeof(uint32_t)*size);
+        for (int j = 0; j < size; ++j) {
+            edges[i].push_back(vec[j]);
+        }
+    }
+    return edges;
 }
 
 
