@@ -163,12 +163,15 @@ public:
 };
 
 int FindGraphAverageDegree(vector< vector <uint32_t>> &graph) {
-    float ans = 0;
+    int ans = 0;
     int n = graph.size();
+    // std::cout << "graph size: " << n << std::endl;
     for (int i=0; i < n; ++i) {
-        ans += graph[i].size();
+        // std::cout << "graph size (i): " << graph[i].size() << std::endl;
+        ans += int(graph[i].size());
     }
-    return float(ans / n);
+    std::cout << "ans: " << ans << std::endl;
+    return float((double)ans / n);
 }
 
 int findGraphAverageDegree(vector< vector <uint32_t>> &graph) {
@@ -180,6 +183,10 @@ int findGraphAverageDegree(vector< vector <uint32_t>> &graph) {
     return ans / n;
 }
 
+inline bool checkFileExistence (string name) {
+    ifstream f(name.c_str());
+    return f.good();
+}
 
 template<typename T>
 void readXvec(std::ifstream &in, T *data, const size_t d, const size_t n = 1)
@@ -190,7 +197,7 @@ void readXvec(std::ifstream &in, T *data, const size_t d, const size_t n = 1)
         if (dim != d) {
             std::cout << "file error\n";
             std::cout << "dim " << dim << ", d " << d << std::endl;
-            std::cout << "our fault\n";
+            std::cerr << "our fault\n";
 
             exit(1);
         }
@@ -227,6 +234,9 @@ void writeEdges(string location, const std::vector<std::vector<uint32_t>> &edges
 
 template<typename T>
 vector<T> loadXvecs(string dataPath, const size_t d, const size_t n = 1) {
+    if(!checkFileExistence(dataPath)) {
+        exit(1);
+    }
     vector<T> data(n * d);
     const char *dataPathChar = dataPath.c_str();
     std::ifstream dataInput(dataPathChar, std::ios::binary);
@@ -238,23 +248,28 @@ vector<T> loadXvecs(string dataPath, const size_t d, const size_t n = 1) {
 vector<std::vector<uint32_t>> load_edges(const char *location, std::vector<std::vector<uint32_t>> edges) {
     // std::cout << "Loading edges from " << location << std::endl;
     std::ifstream input(location, std::ios::binary);
-
+    std::cout << "number of points in load_edges: " << edges.size() << std::endl;
     uint32_t size;
     for (int i = 0; i < edges.size(); i++) {
         input.read((char *) &size, sizeof(uint32_t));
-
+        // std::cout << "each each size: " << size << std::endl;
         vector<uint32_t> vec(size);
         uint32_t *data = vec.data();
         input.read((char *) data, sizeof(uint32_t)*size);
         for (int j = 0; j < size; ++j) {
             edges[i].push_back(vec[j]);
         }
+        // std::cout << "edges (i) size: " << edges[i].size() << std::endl;
     }
     return edges;
 }
 
 
 vector<std::vector<uint32_t>> loadEdges(string location, uint32_t n, string edges_name) {
+    if (!checkFileExistence(location)) {
+        std::cerr << "File " << location << " doesn't exist." << std::endl;
+        exit(1);
+    }
     std::vector<std::vector<uint32_t>> edges(n);
     const char *locationChar = location.c_str();
     std::ifstream input(locationChar, std::ios::binary);
@@ -400,10 +415,7 @@ int findGraphMaxDegree(vector< vector <uint32_t>> &graph) {
 }
 
 
-inline bool checkFileExistence (string name) {
-    ifstream f(name.c_str());
-    return f.good();
-}
+
 
 
 vector< vector<uint32_t> > mergeGraph(vector< vector<uint32_t> > &graph_f, vector< vector<uint32_t> > &graph_s) {
@@ -553,9 +565,11 @@ vector< vector<uint32_t> > hnswlikeGD(vector< vector<uint32_t> > &graph, const f
     int edge = static_cast<int>(M/2);
 #pragma omp parallel for
     for (uint32_t i=0; i < N; ++i) {
+        
         vector<Neighbor> neighbors;
         const float* point_i = ds + i * d;
         for (uint32_t j=0; j < graph[i].size(); ++j) {
+            // cout << "segmentation fault here" << endl;
             const float* point_cur = ds + graph[i][j] * d;
             float dist_i = metric->Dist(point_i, point_cur, d);
             if (dist_i > getEps()) {
@@ -563,6 +577,7 @@ vector< vector<uint32_t> > hnswlikeGD(vector< vector<uint32_t> > &graph, const f
                 neighbors.push_back(neig);
             }
         }
+           
         sort(neighbors.begin(), neighbors.end());
         gd_graph[i].push_back(neighbors[0].number);
         for (uint32_t j=1; j < neighbors.size(); ++j) {

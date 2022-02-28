@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     std::random_device device;
     random_gen.seed(device());
 
-    string params_path = "/home/shekhale/gbnns_dim_red/search/parameters_of_databases.txt";
+    string params_path = "/home/czj/projects/ann/gbnns_dim_red/search/parameters_of_databases.txt";
     std::map<string, string> params_map = readSearchParams(params_path, datasetName);
 
     const size_t n = atoi(params_map["n"].c_str());
@@ -57,13 +57,15 @@ int main(int argc, char **argv) {
     cout << n << " " << n_q << " " << n_tr << " " << d << " " << d_low << endl;
 
 
-    string pathData = "/mnt/data/shekhale/data/" + datasetName + "/" + datasetName;
-    string pathModels = "/mnt/data/shekhale/models/nns_graphs/" + datasetName + "/" + datasetName;
+    string pathData = "/home/czj/projects/ann/data/" + datasetName + "/" + datasetName;
+    string pathModels = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + datasetName + "/" + datasetName;
 
-
-    std::vector<float> db_low = loadXvecs<float>(pathData + "_base_" + fileLatName + ".fvecs", d_low, n);
-
-    vector< vector <uint32_t>> knn_low =  loadEdges(pathModels + "_knn_1k_" + fileLatName + ".ivecs", n, "knn_low");
+    std::string db_low_dir = pathData + "_base_" + fileLatName + ".fvecs";
+    std::cout << "Loading low dimension data from " << db_low_dir << std::endl;
+    std::vector<float> db_low = loadXvecs<float>(db_low_dir, d_low, n);
+    std::string knn_low_dir = pathModels + "_knn_1k_" + fileLatName + ".ivecs";
+    std::cout << "Loading knn low from " << knn_low_dir << std::endl;
+    vector< vector <uint32_t>> knn_low =  loadEdges(knn_low_dir, n, "knn_low");
 
 
 	vector< vector <uint32_t>> gd_knn_low(n);
@@ -74,5 +76,4 @@ int main(int argc, char **argv) {
     writeEdges(pathModels + "_gd_knn_" + fileLatName + ".ivecs", gd_knn_low);
 
     return 0;
-
 }

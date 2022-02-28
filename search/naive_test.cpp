@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
     std::random_device device;
     random_gen.seed(device());
 
-    string paramsPath = "/home/shekhale/gbnns_dim_red/search/parameters_of_databases.txt";
+    string paramsPath = "/home/czj/projects/ann/gbnns_dim_red/search/parameters_of_databases.txt";
     std::map<string, string> paramsMap = readSearchParams(paramsPath, datasetName);
 
     const size_t n = atoi(paramsMap["n"].c_str());
@@ -45,8 +45,8 @@ int main(int argc, char **argv) {
     string netStyle = "naive";
 
 
-    string pathData = "/mnt/data/shekhale/data/" + datasetName + "/" + datasetName;
-    string pathModels = "/mnt/data/shekhale/models/nns_graphs/" + datasetName;
+    string pathData = "/home/czj/projects/ann/data/" + datasetName + "/" + datasetName;
+    string pathModels = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + datasetName;
 
 //-----------------------   LOAD DATA   ----------------------------------------------------
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
     string kl_dir_low = pathModels + "/" + datasetName +  "_kl_llow_sqrt_style.ivecs";
 
 
-    string output_s = "/home/shekhale/results/nns_graphs/" + datasetName + "/naive_results_" + datasetName + ".txt";
+    string output_s = "/home/czj/projects/ann/gbnns_dim_red/results/nns_graphs/" + datasetName + "/naive_results_" + datasetName + ".txt";
     const char *output = output_s.c_str();
     remove(output);
 

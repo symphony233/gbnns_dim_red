@@ -340,11 +340,14 @@ void performNetTest(vector<vector<uint32_t> > &knn_graph, vector<vector<uint32_t
     L2Metric l2 = L2Metric();
     vector<float> zeros(d_low);
     omp_set_num_threads(number_of_threads);
+
     for (int v = 0; v < number_exper; ++v) {
         num_exp += 1;
         vector<uint32_t> ans(n_q);
         StopW stopw = StopW();
-//#pragma omp parallel for
+// #pragma omp parallel
+    // {
+#pragma omp parallel for
         for (int i = 0; i < n_q; ++i) {
 
             TripleResult tripletResult;
@@ -383,9 +386,9 @@ void performNetTest(vector<vector<uint32_t> > &knn_graph, vector<vector<uint32_t
             hops += tripletResult.hops;
             dist_calc += tripletResult.dist_calc;
         }
-
+    // }
         work_time += stopw.getElapsedTimeMicro();
-
+        // auto t = std::chrono::duration_cast<std::chrono::seconds>(work_time);
         int print = 0;
         for (int i = 0; i < n_q; ++i) {
             acc += ans[i] == truth[i * n_tr];
@@ -401,10 +404,14 @@ void performNetTest(vector<vector<uint32_t> > &knn_graph, vector<vector<uint32_t
         }
     }
 
+    //  cout << "graph_type " << graph_name << " acc " << acc /  (num_exp * n_q) << " hops " << hops /  (num_exp * n_q)
+    //     << " dist_calc " << dist_calc /  (num_exp * n_q) << " work_time " << n_q / work_time << endl;
+    // outfile << "graph_type " << graph_name << " acc " << acc /  (num_exp * n_q) << " hops " << hops /  (num_exp * n_q)
+    //     << " dist_calc " << dist_calc /  (num_exp * n_q) << " work_time " << n_q / work_time << endl;
     cout << "graph_type " << graph_name << " acc " << acc /  (num_exp * n_q) << " hops " << hops /  (num_exp * n_q)
-        << " dist_calc " << dist_calc /  (num_exp * n_q) << " work_time " << work_time / (num_exp * 1e6 * n_q) << endl;
+        << " dist_calc " << dist_calc /  (num_exp * n_q) << " work_time " << 1 / (work_time / (num_exp * 1e6 * n_q)) << endl;
     outfile << "graph_type " << graph_name << " acc " << acc /  (num_exp * n_q) << " hops " << hops /  (num_exp * n_q)
-        << " dist_calc " << dist_calc /  (num_exp * n_q) << " work_time " << work_time / (num_exp * 1e6 * n_q) << endl;
+        << " dist_calc " << dist_calc /  (num_exp * n_q) << " work_time " << 1 / (work_time / (num_exp * 1e6 * n_q)) << endl;
 }
 
 
