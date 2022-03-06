@@ -18,7 +18,10 @@ def write_fvecs(filename, vecs):
 def write_ivecs(filename, vecs):
     with open(filename, "wb") as f:
         for vec in vecs:
+            # print(f"one vec shape: {vec.shape}")
+            # exit(0)
             dim = len(vec)
+            # print(f"one vec dim: {dim}")
             f.write(pack('<i', dim))
             f.write(pack('i' * dim, *list(vec)))
 
@@ -72,7 +75,7 @@ def mmap_fvecs(fname):
     x = np.memmap(fname, dtype='int32', mode='r')
     d = x[0]
     x = x.view('float32').reshape(-1, d + 1)[:, 1:]
-    x = x[:10000, :]
+    # x = x[:10000, :]
     print('a: ',x.shape)
     return x
 
@@ -86,11 +89,15 @@ def mmap_bvecs(fname):
 
 def getBasedir(s, mnt=False):
     if mnt:
-        start = "/home/cm/"
+        start = "/home/czj/projects/ann/"
+        # 160
+        # start = "/home/cm/"
         # start = "/home/cm/experiment/big-ann-benchmarks/"
         # start = "/mnt/data/shekhale/"
     else:
-        start = "/home/cm/"
+        start = "/home/czj/projects/ann/"
+        # 160
+        # start = "/home/cm/"
         # start = "/home/shekhale/"
     paths = {
         "sift1b": start + "data/sift1b/sift1b",

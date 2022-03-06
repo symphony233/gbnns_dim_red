@@ -1,3 +1,18 @@
+## Update for fitting local experiment (103 node, fdu)
+
+The original source files are nearly unable to use, because the hard-code of file path.
+
+I changed these path to fit in local machine, but still not suitable. Only for experiment in the very early stage of our research. If we confirm this method would be used in our system, it will be continually fixed.
+Date: 2022 02 28 Monday 12:02:07 CST
+
+Usage: (Must in 103 node)
+```
+- Train: ./run.sh 
+- Build low dimension graph: cd search/ ./graph_compile
+- Perform search: ./final_test sift (or ./compile_final_test)
+```
+(Also, except file paths, there are some bugs or ... in source code that led to runtime error, I already fix it in branch test_103)
+
 ## Reducing Dimensionality method for Nearest Neighbor Search
 
 and code for reproducing experiments from ICML2020 [paper](https://proceedings.icml.cc/static/paper_files/icml/2020/1229-Paper.pdf)

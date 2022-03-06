@@ -51,7 +51,7 @@ def top_dist(A, B, k):
     return cdist2(A, B).topk(k, dim=1, largest=False, sorted=True)[1]
 
 
-def get_nearestneighbors_torch(xq, xb, k, device, needs_exact=False, verbose=True):
+def get_nearestneighbors_torch(xq, xb, k, device, needs_exact=False, verbose=False):
     if verbose:
         print("Computing nearest neighbors (torch)")
 
@@ -59,9 +59,8 @@ def get_nearestneighbors_torch(xq, xb, k, device, needs_exact=False, verbose=Tru
     start = time.time()
     xb, xq = torch.from_numpy(xb), torch.from_numpy(xq)
     xb, xq = xb.to(device), xq.to(device)
-    bs = 10
-    I = torch.cat([top_dist(xq[i*bs:(i+1)*bs], xb, k)
-                   for i in range(xq.size(0) // bs)], dim=0)
+    bs = 500
+    I = torch.cat([top_dist(xq[i*bs:(i+1)*bs], xb, k) for i in range(xq.size(0) // bs)], dim=0)
     if verbose:
         print("  NN search done in %.2f s" % (time.time() - start))
     I = I.cpu()
@@ -251,7 +250,7 @@ def save_transformed_data(ds, model, path, device, enc=False):
     else:
         ds = forward_pass(model, ds, 1024)
     # file_for_write_base = "data/" + path
-    file_for_write_base = "/mnt/data/shekhale/data/" + path
+    file_for_write_base = "/home/czj/projects/ann/data/" + path
     write_fvecs(file_for_write_base, ds)
 
 
@@ -381,7 +380,10 @@ def get_nearestneighbors_partly(xq, xb, k, device, bs=10**5, needs_exact=True, p
         knn.append(res)
     if path != "":
         write_ivecs(path, np.vstack(knn))
-    return np.vstack(knn)
+    knn = np.vstack(knn)
+    print(f'get_nearestneighbors_partly knn shape: {knn.shape}')
+    print(knn[2][2])
+    return knn
 
 
 def get_nearestneighbors_brute(xq, xb, device, bs=10**6, needs_exact=True, sort=False, bucket=100, size = 100):

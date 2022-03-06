@@ -32,7 +32,7 @@ if __name__ == '__main__':
     aa("--print_results", type=int, default=0)
     aa("--save", type=int, default=0)
     aa("--full", type=int, default=0)
-    aa("--val_freq_search", type=int, default=5,
+    aa("--val_freq_search", type=int, default=0,
        help="frequency of validation calls")
     aa("--save_knn_1k", type=int, default=0)
     aa("--save_optimal", type=int, default=0)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     print(args)
 
-    results_file_name = "/home/shekhale/results/dim_red/" + args.database + "/train_results_" + args.method + ".txt"
+    results_file_name = "/home/czj/projects/ann/gbnns_dim_red/results/dim_red/" + args.database + "/train_results_" + args.method + ".txt"
     if args.print_results > 0:
         with open(results_file_name, "a") as rfile:
             rfile.write("\n\n")

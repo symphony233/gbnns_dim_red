@@ -216,7 +216,7 @@ if __name__ == '__main__':
     print(args)
 
     name_for_c = "naive"
-    results_file_name = "/home/shekhale/results/nns_graphs/" + args.database + "/train_results_" + name_for_c + ".txt"
+    results_file_name = "/home/czj/projects/ann/gbnns_dim_red/results/nns_graphs/" + args.database + "/train_results_" + name_for_c + ".txt"
     if args.print_results > 0:
         with open(results_file_name, "a") as rfile:
             rfile.write("\n\n")
@@ -288,7 +288,7 @@ if __name__ == '__main__':
                  log['times'][0], log['times'][1], log['times'][2]))
             rfile.write("------------------------------------------------------ \n")
 
-        modelPath = "/mnt/data/shekhale/models/nns_graphs/" + args.database + "/" + args.database
+        modelPath = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + args.database + "/" + args.database
         k_nn = get_nearestneighbors_partly(xb, xb, 1000, args.device, bs=3*10**5, needs_exact=True)
         write_ivecs(modelPath + "_knn_1k.ivecs", k_nn)
 

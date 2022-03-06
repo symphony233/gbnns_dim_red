@@ -256,7 +256,7 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
 
     string file_name = "";
     if (transform_type == 't') {
-        file_name = "triplet_wrap";
+        file_name = "triplet";
     } else if (transform_type == 'p') {
         file_name = "pca";
     }
@@ -308,9 +308,11 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
     const size_t d_low = d_low_p;
 
     cout << n << " " << n_q << " " << n_tr << " " << d << " " << d_low << endl;
-
-    string path_data = "/home/cm/data/" + dataset_name + "/" + dataset_name;
-    string path_models = "/home/cm/experiment/gbnns_dim_red/models/nn_graphs" + dataset_name + "/" + dataset_name;
+    
+    string path_data = "/home/czj/projects/ann/data/" + dataset_name + "/" + dataset_name;
+    string path_models = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs" + dataset_name + "/" + dataset_name;
+    // string path_data = "/home/cm/data/" + dataset_name + "/" + dataset_name;
+    // string path_models = "/home/cm/experiment/gbnns_dim_red/models/nn_graphs" + dataset_name + "/" + dataset_name;
     // string path_data = "/mnt/data/shekhale/data/" + dataset_name + "/" + dataset_name;
     // string path_models = "/mnt/data/shekhale/models/nns_graphs/" + dataset_name + "/";
 //    string net_style = "naive_triplet";
@@ -327,10 +329,10 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
     string dir_q_low = path_data + "_query_"  + file_name + valid + ".fvecs";
     const char *query_low_dir = dir_q_low.c_str();  // path to data
 
-    string edge_knn_low_dir_s = path_models + "knn_1k_" + file_name + valid + ".ivecs";
+    string edge_knn_low_dir_s = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + dataset_name + "/" + "knn_1k_" + file_name + valid + ".ivecs";
     const char *edge_knn_low_dir = edge_knn_low_dir_s.c_str();
 
-    string output_txt_s = "/home/cm/experiment/gbnns_dim_red/results/" + dataset_name + "/train_results_" +  file_name + ".txt";
+    string output_txt_s = "/home/czj/projects/ann/gbnns_dim_red/results/" + dataset_name + "/train_results_" +  file_name + ".txt";
     const char *output_txt = output_txt_s.c_str();
 //    remove(output_txt);
 
@@ -339,27 +341,31 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
 //    // Load Data
 //    //============
 
-    std::cout << "Loading data from " << data_dir << std::endl;
+    
     std::vector<float> ds(n * d);
     {
+        std::cout << "Loading data from " << data_dir << std::endl;
         std::ifstream data_input(data_dir, std::ios::binary);
         readXvec<float>(data_input, ds.data(), d, n);
     }
 
     std::vector<float> queries(n_q * d);
     {
+        std::cout << "Loading query from " << query_dir << std::endl;
         std::ifstream data_input(query_dir, std::ios::binary);
         readXvec<float>(data_input, queries.data(), d, n_q);
     }
 
     std::vector<uint32_t> truth(n_q * n_tr);
     {
+        std::cout << "Loading ground truth from " << truth_dir << std::endl;
         std::ifstream data_input(truth_dir, std::ios::binary);
         readXvec<uint32_t>(data_input, truth.data(), n_tr, n_q);
     }
 
     std::vector<float> ds_low(n * d_low);
     if (d > d_low) {
+        std::cout << "Loading low dimension data from " << data_low_dir << std::endl;
         std::ifstream data_input(data_low_dir, std::ios::binary);
         readXvec<float>(data_input, ds_low.data(), d_low, n);
     } else {
@@ -368,6 +374,7 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
 
     std::vector<float> queries_low(n_q * d_low);
     if (d > d_low) {
+        std::cout << "Loading low dimension query from " << query_low_dir << std::endl;
         std::ifstream data_input(query_low_dir, std::ios::binary);
         readXvec<float>(data_input, queries_low.data(), d_low, n_q);
     } else {
@@ -378,9 +385,10 @@ int get_graphs_and_search_tests(char transform_type, char dataset, int d_p, int 
 	vector<int>  trash;
 
     vector< vector <uint32_t>> knn_low(n);
+    std::cout << "Loading edges from " << edge_knn_low_dir << std::endl;
     knn_low = load_edges(edge_knn_low_dir, knn_low);
 	cout << "knn_low " << FindGraphAverageDegree(knn_low) << endl;
-
+ 
 	vector< vector <uint32_t>> gd_knn_low(n);
     // gd_knn_low = load_edges(edge_gd_knn_low_dir, gd_knn_low);
 	gd_knn_low = hnswlikeGD(knn_low, ds_low.data(), 20, n, d_low, &l2, reverse_gd, false);

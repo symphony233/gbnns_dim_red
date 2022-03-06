@@ -175,7 +175,7 @@ def angular_optimize(xt, xv, xq, net, args, lambda_uniform, lambda_triplet, lamb
             net.eval()
             dim = xt.shape[1]
             yt = forward_pass(net, xt, 1024)
-            knn_low_path = "/mnt/data/shekhale/models/nns_graphs/" + args.database +\
+            knn_low_path = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + args.database +\
                            "/knn_1k_" + net_style + valid + ".ivecs"
             get_nearestneighbors_partly(yt, yt, 1000, args.device, bs=3 * 10 ** 5, needs_exact=True, path=knn_low_path)
             save_transformed_data(xt, net, args.database + "/" + args.database + "_base_" + net_style + valid + ".fvecs",
@@ -188,11 +188,11 @@ def angular_optimize(xt, xv, xq, net, args, lambda_uniform, lambda_triplet, lamb
                 save_transformed_data(xq, net, args.database + "/" + args.database + "_query_" + net_style + ".fvecs",
                                       args.device)
             acc_cur = c_support.get_graphs_and_search_tests("a", dfl, dim, args.dout, xq.shape[0], valid_char,
-                                                            xt.shape[0], 0, False)
+                                                            xt.shape[0], True)
             acc_cur = round(acc_cur, 5)
             if args.save_optimal > 0:
                 if len(acc) > 0 and acc_cur > max(acc):
-                    net_path = "/mnt/data/shekhale/models/nns_graphs/" + str(args.database) + "/" + \
+                    net_path = "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + str(args.database) + "/" + \
                                str(args.database) + "_net_angular_optimal.pth"
                     torch.save(net.state_dict(), net_path)
             acc.append(acc_cur)
@@ -255,8 +255,8 @@ def train_angular(xb, xt, xv, xq, args, results_file_name, perm):
         net.to(args.device)
         val_k = 2 * args.dout
 
-        models_path =  "/mnt/data/shekhale/models/nns_graphs/" + args.database + "/" + args.database
-        data_path =  "/mnt/data/shekhale/data/" + args.database + "/" + args.database
+        models_path =  "/home/czj/projects/ann/gbnns_dim_red/models/nns_graphs/" + args.database + "/" + args.database
+        data_path =  "/home/czj/projects/ann/data/" + args.database + "/" + args.database
         valid = ""
         if args.full != 1:
             valid = "_valid"
@@ -309,7 +309,7 @@ def train_angular(xb, xt, xv, xq, args, results_file_name, perm):
                 knn_low_path = models_path + "_knn_1k_" + net_style + ".ivecs"
                 get_nearestneighbors_partly(yb, yb, 1000, args.device, bs=3*10**5, needs_exact=True, path=knn_low_path)
 
-            gt_low_path = "/mnt/data/shekhale/data/" + args.database + "/" +\
+            gt_low_path = "/home/czj/projects/ann/data/" + args.database + "/" +\
                           args.database + "_groundtruth_" + net_style + ".ivecs"
             get_nearestneighbors_partly(yq, yb, 100, args.device, bs=3*10**5, needs_exact=True, path=gt_low_path)
 
