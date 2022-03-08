@@ -11,7 +11,7 @@ Usage: (Must in 103 node)
 - Build low dimension graph: cd search/ ./graph_compile
 - Perform search: ./final_test sift (or ./compile_final_test)
 ```
-(Also, except file paths, there are some bugs or ... in source code that led to runtime error, I already fix it in branch test_103)
+(Also, except file paths, there are some bugs or ... in source code that led to runtime error, I already fixed it in branch test_103)
 
 ## Reducing Dimensionality method for Nearest Neighbor Search
 
